@@ -1,7 +1,7 @@
 "use client";
 
 import Loader from "./Loader";
-import React from "react";
+import React, { useState } from "react";
 import Header from "@/components/Header";
 import {
   SignInButton,
@@ -12,24 +12,36 @@ import {
 } from "@clerk/nextjs";
 import { ClientSideSuspense, RoomProvider } from "@liveblocks/react";
 import { Editor } from "./editor/Editor";
+import ActiveCollaborators from "./ActiveCollaborators";
 
-const CollaborativeRoom = () => {
+const CollaborativeRoom = ({
+  roomId,
+  roomMetadata,
+}: CollaborativeRoomProps) => {
+  const [documentTitle, setDocumentTitle] = useState(roomMetadata.title) 
+  const [editing, setEditing] = useState(false);
+  const [loading, setLoading] = useState(false)
+
+
   return (
-    <RoomProvider id="my-room">
+    <RoomProvider id={roomId}>
       <ClientSideSuspense fallback={<Loader />}>
         {" "}
         <div className="collaborative-room">
-          <Header>
+          <Header className="">
             <div className="flex w-fit items-center justify-center gap-2">
               <p className="document-title">Share</p>
             </div>
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
+            <div className="flex w-full flex-1 justify-end gap-2 sm:gap-3">
+              <ActiveCollaborators />
+              <SignedOut>
+                <SignInButton />
+                <SignUpButton />
+              </SignedOut>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
+            </div>
           </Header>
           <Editor />
         </div>
